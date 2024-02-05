@@ -1,26 +1,31 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import type React from 'react';
+import { useState } from 'react';
+import { Layout, Flex } from 'antd';
+import { AppContext } from './AppContext';
+import Sidebar from './components/sidebar';
+import Main from './components/main';
 
-function App() {
+const layoutStyle = {
+  borderRadius: 8,
+  overflow: 'hidden',
+  width: 'calc(100% - 8px)',
+  maxWidth: 'calc(100% - 8px)',
+  minHeight: 'calc(100vh - 8px)'
+};
+
+const App: React.FC = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [waitingForResponse, setWaitingForResponse] = useState(false);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AppContext.Provider value={{ isSidebarOpen, setIsSidebarOpen, waitingForResponse, setWaitingForResponse }}>
+      <Flex wrap="wrap">
+        <Layout style={layoutStyle}>
+          <Sidebar />
+          <Main />
+        </Layout>
+      </Flex>
+    </AppContext.Provider>
   );
-}
+};
 
 export default App;
