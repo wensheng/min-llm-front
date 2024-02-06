@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FloatButton, Layout, Typography } from 'antd';
 import { ControlOutlined, HomeOutlined, KeyOutlined, WechatOutlined } from '@ant-design/icons';
-import { green } from '@ant-design/colors';
+// import { green } from '@ant-design/colors';
 import { AppContext } from '../AppContext';
 import { useChatStore } from '../store';
 import SettingsModal from './SettingsModal';
@@ -10,7 +10,7 @@ const siderStyle: React.CSSProperties = {
   textAlign: 'center',
   lineHeight: '120px',
   color: '#fff',
-  backgroundColor: green[9]
+  backgroundColor: '#092b00' // green[9]
 };
 
 const Sidebar: React.FC = () => {
