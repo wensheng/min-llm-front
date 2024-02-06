@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FloatButton, Layout, Typography } from 'antd';
-import { ControlOutlined, HomeOutlined, WechatOutlined } from '@ant-design/icons';
+import { ControlOutlined, HomeOutlined, KeyOutlined, WechatOutlined } from '@ant-design/icons';
 import { green } from '@ant-design/colors';
 import { AppContext } from '../AppContext';
 import { useChatStore } from '../store';
@@ -17,7 +17,9 @@ const Sidebar: React.FC = () => {
   const llmApiUrl = useChatStore(state => state.llmApiUrl);
   const setLlmApiUrl = useChatStore(state => state.setLlmApiUrl);
   const prompt = useChatStore(state => state.prompt);
-  // const setPrompt = useChatStore(state => state.setPrompt);
+  const setPrompt = useChatStore(state => state.setPrompt);
+  const apiKey = useChatStore(state => state.apiKey);
+  const setApiKey = useChatStore(state => state.setApiKey);
   const savedSessions = useChatStore(state => state.savedSessions);
 
   const { isSidebarOpen } = React.useContext(AppContext);
@@ -26,45 +28,38 @@ const Sidebar: React.FC = () => {
   const [inputValue, setInputValue] = useState(llmApiUrl);
   const [inputType, setInputType] = useState('text');
   const [modalTitle, setModalTitle] = useState('Setting');
+  const [paramType, setParamType] = useState('' as 'url' | 'prompt' | 'key');
 
-  const showUrlModal = (): void => {
-    setInputType('text');
-    setModalTitle('LLM API URL');
-    setInputValue(llmApiUrl);
-    setIsModalOpen(true);
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+    setInputValue(e.target.value);
   };
 
-  const showPromptModal = (): void => {
-    setInputType('textarea');
-    setModalTitle('Prompt');
-    setInputValue(prompt);
+  const showModal = (inputType: string, title: string, param: string, paramType: string) => (): void => {
+    setInputType(inputType);
+    setModalTitle(title);
+    setInputValue(param);
+    setParamType(paramType as 'prompt' | 'url' | 'key');
     setIsModalOpen(true);
   };
-
-  // const onChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-  //   setInputValue(e.target.value);
-  // };
 
   const handleOk = (): void => {
-    setLlmApiUrl(inputValue);
+    if (paramType === 'prompt') {
+      setPrompt(inputValue);
+    }
+    if (paramType === 'url') {
+      setLlmApiUrl(inputValue);
+    }
+    if (paramType === 'key') {
+      setApiKey(inputValue);
+    }
     setIsModalOpen(false);
   };
 
   const handleCancel = (): void => {
     setIsModalOpen(false);
   };
-  /*
-      <Modal
-        title="Setting"
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-      >
-        <Input addonBefore="API URL" value={inputValue} onChange={onChange} />
-      </Modal>
-  */
 
-  // Using Sider as Drawer
+  // Using Sider as Drawer, might as well use Drawer
   return (
     <Layout.Sider
       width="15%"
@@ -91,8 +86,9 @@ const Sidebar: React.FC = () => {
           style={{ left: 24, bottom: 20 }}
           icon={<ControlOutlined />}
         >
-          <FloatButton icon={<HomeOutlined />} onClick={showUrlModal}/>
-          <FloatButton onClick={showPromptModal} />
+          <FloatButton icon={<HomeOutlined />} onClick={showModal('text', 'API URL', llmApiUrl, 'url')}/>
+          <FloatButton onClick={showModal('textarea', 'Prompt', prompt, 'prompt')} />
+          <FloatButton icon={<KeyOutlined />} onClick={showModal('text', 'API Key', apiKey, 'key')} />
         </FloatButton.Group>
       </div>
       <SettingsModal
@@ -103,6 +99,7 @@ const Sidebar: React.FC = () => {
         isOpen={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
+        onInputChange={onInputChange}
       />
     </Layout.Sider>
   );

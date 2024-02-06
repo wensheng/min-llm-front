@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { Card, Col, Row } from 'antd';
-import { LinuxOutlined, UserOutlined } from '@ant-design/icons';
+import { RobotOutlined, UserOutlined } from '@ant-design/icons';
 import type { MessageProps } from '../types';
 
 const dateOptions: Intl.DateTimeFormatOptions = {
@@ -25,7 +25,7 @@ const ChatItem = memo<MessageProps>(({ from, message, date }: MessageProps) => {
   }
   return (
     <Row justify="start">
-      <Col span={1}><LinuxOutlined style={{ fontSize: '24px' }} /></Col>
+      <Col span={1}><RobotOutlined style={{ fontSize: '24px' }} /></Col>
       <Col span={22}>
         <Card actions={[date.toLocaleString('en-US', dateOptions)]} >
           {message}

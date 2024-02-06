@@ -7,6 +7,8 @@ export interface ChatState {
   setLlmApiUrl: (url: string) => void
   messages: MessageProps[]
   fetchMessage: (from: string, message: string) => void
+  apiKey: string
+  setApiKey: (prompt: string) => void
   prompt: string
   setPrompt: (prompt: string) => void
   savedSessions: string[]
@@ -26,6 +28,8 @@ export const useChatStore = create<ChatState>()(
           messages: [...state.messages, { from, message, date: new Date() }]
         }));
       },
+      apiKey: '',
+      setApiKey: (key) => { set({ apiKey: key }); },
       prompt: '',
       setPrompt: (prompt) => { set({ prompt }); },
       savedSessions: [],

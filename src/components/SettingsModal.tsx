@@ -9,6 +9,7 @@ interface SettingsModalProps {
   isOpen: boolean
   onOk: () => void
   onCancel: () => void
+  onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
 }
 
 const SettingsModal: React.FC<SettingsModalProps> = (props) => {
@@ -24,18 +25,14 @@ const SettingsModal: React.FC<SettingsModalProps> = (props) => {
           ? (
           <Input.TextArea
             value={props.value}
-            onChange={(e) => {
-              console.log(e.target.value);
-            }}
+            onChange={props.onInputChange}
           />
             )
           : (
           <Input
             type="text"
             value={props.value}
-            onChange={(e) => {
-              console.log(e.target.value);
-            }}
+            onChange={props.onInputChange}
           />
             )
       }
