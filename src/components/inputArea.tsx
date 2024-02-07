@@ -30,14 +30,20 @@ const InputArea: React.FC = () => {
   const { waitingForResponse, setWaitingForResponse } = useContext(AppContext);
   const fetchMessage = useChatStore((state) => state.fetchMessage);
   const llmApiUrl = useChatStore((state) => state.llmApiUrl);
+  const apiKey = useChatStore((state) => state.apiKey);
+  const prompt = useChatStore((state) => state.prompt);
 
   const onSend = (): void => {
     if (waitingForResponse) return;
     fetchMessage('user', inputValue);
     setWaitingForResponse(true);
-    sendToLLM(llmApiUrl, inputValue).then(
+    sendToLLM(llmApiUrl, apiKey, prompt, inputValue).then(
       (response): void => {
-        fetchMessage('llm', response.message);
+        if ('error' in response) {
+          fetchMessage('llm', response.error.message);
+        } else {
+          fetchMessage('llm', response.choices[0].message.content);
+        }
         setWaitingForResponse(false);
       },
       (error): void => { console.error(error); }

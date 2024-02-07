@@ -3,7 +3,7 @@ import { useChatStore } from '../store';
 import ChatItem from './ChatItem';
 
 const chatAreaStyle: React.CSSProperties = {
-  textAlign: 'center',
+  textAlign: 'left',
   minHeight: 300,
   maxHeight: 600,
   backgroundColor: '#957d9',
