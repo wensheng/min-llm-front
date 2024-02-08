@@ -12,42 +12,58 @@ export interface MessageProps {
   date: Date
 };
 
+export interface ChatSettings {
+  modelName: string
+  apiUrl: string
+  apiKey: string
+  sysPrompt: string
+}
+
 interface OAIMessage {
-  role: "assistant";
-  content: string;
+  role: 'assistant'
+  content: string
 }
 
 interface OAIChoice {
-  index: number;
-  message: OAIMessage;
-  logprobs?: null;
-  finish_reason: "stop";
+  index: number
+  message: OAIMessage
+  logprobs?: null
+  finish_reason: 'stop'
 }
 
 interface OAIUsage {
-  prompt_tokens: number;
-  completion_tokens: number;
-  total_tokens: number;
+  prompt_tokens: number
+  completion_tokens: number
+  total_tokens: number
 }
 
 interface OAIChatCompletionResponse {
-  id: string;
-  object: "chat.completion";
-  created: number;
-  model: string;
-  choices: OAIChoice[];
-  usage: OAIUsage;
-  system_fingerprint?: string | null;
+  id: string
+  object: string
+  created: number
+  model: string
+  choices: OAIChoice[]
+  usage: OAIUsage
+  system_fingerprint?: string | null
+  message?: string | null // for FastChatErrorResponse
+
 }
 
 interface OAIErrorResponse {
   error: {
-    message: string;
-    type: string;
-    param: null;
-    code: string;
-  };
+    message: string
+    type: string
+    param?: null
+    code: string
+  }
 }
 
-export type OAIAPIResponse = OAIChatCompletionResponse | OAIErrorResponse;
+/*
+interface FastChatErrorResponse {
+  object: 'error'
+  message: string;
+  code: number
+}
+*/
 
+export type OAIAPIResponse = OAIChatCompletionResponse | OAIErrorResponse
