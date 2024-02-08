@@ -1,16 +1,12 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { type MessageProps } from './types';
+import type { ChatSettings, MessageProps } from './types';
 
 export interface ChatState {
-  llmApiUrl: string
-  setLlmApiUrl: (url: string) => void
+  chatSettings: ChatSettings
+  setChatSettings: (settings: ChatSettings) => void
   messages: MessageProps[]
   fetchMessage: (from: string, message: string) => void
-  apiKey: string
-  setApiKey: (prompt: string) => void
-  prompt: string
-  setPrompt: (prompt: string) => void
   savedSessions: string[]
   saveSession: (session: string) => void
 }
@@ -18,21 +14,22 @@ export interface ChatState {
 export const useChatStore = create<ChatState>()(
   persist(
     (set) => ({
-      llmApiUrl: 'http://localhost:8000',
-      setLlmApiUrl (url) {
-        set({ llmApiUrl: url });
+      chatSettings: {
+        modelName: 'gpt-3.5-turbo',
+        apiUrl: 'https://api.openai.com/v1/chat/completions',
+        apiKey: '',
+        sysPrompt: 'You are a helpful assistant.'
       },
-      messages: [] as MessageProps[], // Fix the type mismatch by explicitly specifying the type of 'messages' as 'MessageProps[]'
+      setChatSettings (settings) {
+        set({ chatSettings: settings });
+      },
+      messages: [] as MessageProps[],
       fetchMessage: (from, message) => {
         set((state) => ({
           messages: [...state.messages, { from, message, date: new Date() }]
         }));
       },
-      apiKey: '',
-      setApiKey: (key) => { set({ apiKey: key }); },
-      prompt: '',
-      setPrompt: (prompt) => { set({ prompt }); },
-      savedSessions: [],
+      savedSessions: [] as string[], // Fix the type of 'savedSessions' to be 'string[]'
       saveSession: (session) => {
         set((state) => ({
           savedSessions: [...state.savedSessions, session]

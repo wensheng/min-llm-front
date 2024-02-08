@@ -29,20 +29,23 @@ const InputArea: React.FC = () => {
   const [inputValue, setInputValue] = useState('');
   const { waitingForResponse, setWaitingForResponse } = useContext(AppContext);
   const fetchMessage = useChatStore((state) => state.fetchMessage);
-  const llmApiUrl = useChatStore((state) => state.llmApiUrl);
-  const apiKey = useChatStore((state) => state.apiKey);
-  const prompt = useChatStore((state) => state.prompt);
+  const chatSettings = useChatStore((state) => state.chatSettings);
 
   const onSend = (): void => {
     if (waitingForResponse) return;
     fetchMessage('user', inputValue);
     setWaitingForResponse(true);
-    sendToLLM(llmApiUrl, apiKey, prompt, inputValue).then(
+    sendToLLM(chatSettings, inputValue).then(
       (response): void => {
         if ('error' in response) {
           fetchMessage('llm', response.error.message);
         } else {
-          fetchMessage('llm', response.choices[0].message.content);
+          if (response.object === 'error') {
+            // FastChat error
+            fetchMessage('llm', response.message ?? '');
+          } else {
+            fetchMessage('llm', response.choices[0].message.content);
+          }
         }
         setWaitingForResponse(false);
       },
@@ -54,9 +57,10 @@ const InputArea: React.FC = () => {
     setInputValue(e.target.value);
   };
 
+  // TODO: upload file
   return (
     <Flex gap="small">
-      <Upload {...uploadProps} action={ llmApiUrl + '/upload' }>
+      <Upload {...uploadProps} action={ '/upload' }>
         <Button icon={<UploadOutlined />} />
       </Upload>
       <Input.TextArea

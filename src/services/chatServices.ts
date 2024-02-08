@@ -1,4 +1,4 @@
-import { type OAIAPIResponse } from '../types';
+import type { OAIAPIResponse, ChatSettings } from '../types';
 
 type RespType = OAIAPIResponse & {
   date: Date
@@ -20,30 +20,31 @@ interface ApiRequest {
  * @param apiKey leave empty if not OpenAI
  * @param message user message
  */
-export const sendToLLM = async (url: string, apiKey: string, prompt: string, message: string): Promise<RespType> => {
+export const sendToLLM = async (chatSettings: ChatSettings, message: string): Promise<RespType> => {
+  const { apiUrl, apiKey, modelName, sysPrompt } = chatSettings;
   const headers: Record<string, string> = {
     'Content-Type': 'application/json'
   };
 
-  if (url.startsWith('https://api.openai.com') && apiKey !== '') {
-    headers.Authorization = `Bearer ${apiKey}`;
-  }
-
   const apiData: ApiRequest = {
-    model: 'gpt-3.5-turbo',
     messages: [
       {
         role: 'system',
-        content: prompt
+        content: sysPrompt
       },
       {
         role: 'user',
         content: message
       }
-    ]
+    ],
+    model: modelName
   };
 
-  const response = await fetch(url, {
+  if (apiUrl.startsWith('https://api.openai.com') && apiKey !== '') {
+    headers.Authorization = `Bearer ${apiKey}`;
+  }
+
+  const response = await fetch(apiUrl, {
     method: 'POST',
     headers,
     body: JSON.stringify(apiData)
