@@ -1,6 +1,6 @@
 import type React from 'react';
 import { useState } from 'react';
-import { Input, Modal, Space } from 'antd';
+import { Checkbox, Input, Modal, Space } from 'antd';
 import type { ChatSettings } from '../types';
 
 interface SettingsModalProps {
@@ -15,9 +15,10 @@ const SettingsModal: React.FC<SettingsModalProps> = (props) => {
   const [modelName, setModelName] = useState(props.chatSettings.modelName);
   const [sysPrompt, setSysPrompt] = useState(props.chatSettings.sysPrompt);
   const [apiKey, setApiKey] = useState(props.chatSettings.apiKey);
+  const [stream, setStream] = useState(props.chatSettings.stream);
 
   const onOk = (): void => {
-    props.setChatSettings({ apiUrl, modelName, sysPrompt, apiKey });
+    props.setChatSettings({ apiUrl, modelName, sysPrompt, apiKey, stream });
     props.onOk();
   }
 
@@ -55,6 +56,10 @@ const SettingsModal: React.FC<SettingsModalProps> = (props) => {
           value={sysPrompt}
           onChange={ (e) => { setSysPrompt(e.target.value); } }
         />
+
+        <span>Streaming Response: &nbsp;
+        <Checkbox checked={stream} onChange={ (e) => { setStream(e.target.checked); } } />
+        </span>
       </Space>
 
     </Modal>

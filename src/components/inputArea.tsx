@@ -2,6 +2,7 @@ import type React from 'react';
 import { useContext, useState } from 'react';
 import { Button, Flex, Input, Upload, type UploadProps } from 'antd';
 import { SendOutlined, UploadOutlined } from '@ant-design/icons';
+import type { ChatSettings } from '../types';
 import { useChatStore } from '../store';
 import { AppContext } from '../AppContext';
 import { sendToLLM } from '../services/chatServices';
@@ -25,32 +26,88 @@ const uploadProps: UploadProps = {
   }
 };
 
-const InputArea: React.FC = () => {
+interface InputAreaProps {
+  currentStreamingRef: React.RefObject<HTMLDivElement>
+};
+
+const InputArea: React.FC<InputAreaProps> = ({ currentStreamingRef }) => {
   const [inputValue, setInputValue] = useState('');
   const { waitingForResponse, setWaitingForResponse } = useContext(AppContext);
   const fetchMessage = useChatStore((state) => state.fetchMessage);
-  const chatSettings = useChatStore((state) => state.chatSettings);
+  const chatSettings: ChatSettings = useChatStore((state) => state.chatSettings);
 
   const onSend = (): void => {
-    if (waitingForResponse) return;
+    if (waitingForResponse) {
+      return;
+    }
     fetchMessage('user', inputValue);
     setWaitingForResponse(true);
-    sendToLLM(chatSettings, inputValue).then(
-      (response): void => {
-        if ('error' in response) {
-          fetchMessage('llm', response.error.message);
-        } else {
-          if (response.object === 'error') {
-            // FastChat error
-            fetchMessage('llm', response.message ?? '');
-          } else {
-            fetchMessage('llm', response.choices[0].message.content);
+
+    if (chatSettings.stream) {
+      sendToLLM(chatSettings, inputValue)
+        .then((response: Response) => response.body)
+        .then(async (stream: ReadableStream<Uint8Array> | null) => {
+          if (stream === null) {
+            setWaitingForResponse(false);
+            return;
           }
-        }
-        setWaitingForResponse(false);
-      },
-      (error): void => { console.error(error); }
-    );
+          let respText = '';
+          const reader = stream.getReader();
+          const decoder = new TextDecoder();
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) {
+              break;
+            }
+            const text = decoder.decode(value, { stream: false });
+            // data: {"id":"chatcmpl-8qGVJL7Ru0DnKHtfH61eKVwgNDY2F","object":"chat.completion.chunk","created":1707467189,"model":"gpt-3.5-turbo-0613","system_fingerprint":null,"choices":[{"index":0,"delta":{"role":"assistant","content":""},"logprobs":null,"finish_reason":null}]}
+            console.log(text);
+            try {
+              const words = text.split(/data: /g).map((chunk) => {
+                if (chunk.length === 0 || !chunk.includes('"choices":[')) {
+                  return '';
+                } else {
+                  return JSON.parse(chunk).choices[0].delta.content;
+                }
+              });
+              const wordChunk = words.join('');
+              // console.log(wordChunk);
+              if (currentStreamingRef.current !== null) {
+                currentStreamingRef.current.innerHTML += wordChunk;
+              }
+              respText += wordChunk;
+            } catch (error) {
+              console.error(text);
+              console.error(error);
+            }
+          }
+          setWaitingForResponse(false);
+          fetchMessage('llm', respText);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } else {
+      sendToLLM(chatSettings, inputValue)
+        .then(async (response: Response) => await response.json())
+        .then((response) => {
+          if ('error' in response) {
+            fetchMessage('llm', response.error.message);
+          } else {
+            if (response.object === 'error') {
+              // FastChat error
+              fetchMessage('llm', response.message ?? '');
+            } else {
+              fetchMessage('llm', response.choices[0].message.content);
+            }
+          }
+          setWaitingForResponse(false);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+    setInputValue('');
   };
 
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>): void => {

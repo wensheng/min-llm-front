@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { FloatButton, Layout, Typography } from 'antd';
-import { ControlOutlined, HomeOutlined, WechatOutlined } from '@ant-design/icons';
+import { FloatButton, Layout, Tooltip, Typography } from 'antd';
+import { ControlOutlined, WechatOutlined, ExportOutlined } from '@ant-design/icons';
 import { AppContext } from '../AppContext';
 import { useChatStore } from '../store';
 import SettingsModal from './SettingsModal';
@@ -46,7 +46,7 @@ const Sidebar: React.FC = () => {
         {
           savedSessions.map((session, index) => (
             <div key={index} style={{ padding: '10px 0' }}>
-              {session}
+              {session.title}
             </div>
           ))
         }
@@ -57,8 +57,12 @@ const Sidebar: React.FC = () => {
             style={{ left: 24, bottom: 20 }}
             icon={<ControlOutlined />}
           >
-            <FloatButton onClick={showModal} />
-            <FloatButton icon={<HomeOutlined />} />
+            <Tooltip title="Settings">
+              <FloatButton onClick={showModal} />
+            </Tooltip>
+            <Tooltip title="Export Sessions">
+              <FloatButton icon={<ExportOutlined />} />
+            </Tooltip>
           </FloatButton.Group>
         ) }
       </div>

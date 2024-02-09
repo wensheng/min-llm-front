@@ -1,4 +1,4 @@
-import { type ReactElement, memo } from 'react';
+import { type FC, type ReactElement, memo } from 'react';
 import { Card, Col, Row } from 'antd';
 import { RobotOutlined, UserOutlined } from '@ant-design/icons';
 import type { MessageProps } from '../types';
@@ -23,7 +23,18 @@ const formatMessage = (message: string): ReactElement<HTMLDivElement> => {
   return <div dangerouslySetInnerHTML={{ __html: msg }} />;
 };
 
-const ChatItem = memo<MessageProps>(({ from, message, date }: MessageProps) => {
+export const LastChatItem: FC<{ currentStreamingRef: React.RefObject<HTMLDivElement> }> = ({ currentStreamingRef }) => (
+  <Row justify="start">
+      <Col span={0}><RobotOutlined style={{ fontSize: '24px' }} /></Col>
+      <Col span={20}>
+        <Card actions={[new Date().toLocaleString('en-US', dateOptions)]} >
+          <div ref={currentStreamingRef} />
+        </Card>
+      </Col>
+  </Row>
+);
+
+export const ChatItem = memo<MessageProps>(({ from, message, date }: MessageProps) => {
   if (from === 'user') {
     return (
       <Row justify="end">
@@ -49,5 +60,3 @@ const ChatItem = memo<MessageProps>(({ from, message, date }: MessageProps) => {
 });
 
 ChatItem.displayName = 'ChatItem';
-
-export default ChatItem;
