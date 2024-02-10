@@ -1,5 +1,3 @@
-# This is a basic workflow to help you get started with Actions
-
 name: CI
 
 # Controls when the workflow will run
@@ -25,6 +23,38 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
-      # Runs a single command using the runners shell
-      - name: Build and Deploy React app to GitHub Pages
-        run: omkartapale/react-deployment-gh-pages@v1.0.0
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      # install dependencies
+      - name: Install dependencies
+        run: npm i
+
+      # build the react app
+      - name: Build
+        run: npm run build
+
+      - run : git config user.name github-actions
+        shell: bash
+
+      - run : git config user.email github-actions@github.com
+        shell: bash
+
+      - run : git --work-tree build add --all
+        shell: bash
+
+      - run : git commit -m "Automatic Build and Deploy run by GitHub Actions"
+        shell: bash
+
+      - run : git push origin HEAD:gh-pages --force
+        shell: bash
