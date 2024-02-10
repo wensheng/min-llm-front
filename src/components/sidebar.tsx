@@ -29,6 +29,19 @@ const Sidebar: React.FC = () => {
     setIsModalOpen(false);
   };
 
+  const exportSessions = (): void => {
+    const sessions = JSON.stringify(savedSessions);
+    const blob = new Blob([sessions], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'sessions.json';
+    // document.body.appendChild(a);
+    a.click();
+    // document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   // Using Sider as Drawer, might as well use Drawer
   return (
     <Layout.Sider
@@ -61,7 +74,7 @@ const Sidebar: React.FC = () => {
               <FloatButton onClick={showModal} />
             </Tooltip>
             <Tooltip title="Export Sessions">
-              <FloatButton icon={<ExportOutlined />} />
+              <FloatButton icon={<ExportOutlined onClick={exportSessions} />} />
             </Tooltip>
           </FloatButton.Group>
         ) }
