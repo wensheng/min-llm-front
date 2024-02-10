@@ -11,7 +11,6 @@ const dateOptions: Intl.DateTimeFormatOptions = {
 };
 
 const formatMessage = (message: string): ReactElement<HTMLDivElement> => {
-  console.log(message);
   if (message === '' || message === undefined) return <div />;
   const msg = message.replace(/```([^`]*)```|(\n)/g, function (match, codeBlock: string, lineBreak) {
     if (codeBlock !== undefined && codeBlock !== '') {

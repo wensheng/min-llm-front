@@ -30,6 +30,7 @@ export const sendToLLM = async (chatSettings: ChatSettings, message: string): Pr
     headers.Authorization = `Bearer ${apiKey}`;
   }
 
+  // TODO: fschat will return 400 if model name mis-matches.
   return await fetch(apiUrl, {
     method: 'POST',
     headers,
