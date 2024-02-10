@@ -17,11 +17,18 @@ export interface ChatSettings {
   apiUrl: string
   apiKey: string
   sysPrompt: string
+  stream: boolean
 }
 
-interface OAIMessage {
-  role: 'assistant'
+export interface OAIMessage {
+  role: 'assistant' | 'user' | 'system'
   content: string
+}
+
+export interface ApiRequest {
+  model: string
+  messages: OAIMessage[]
+  stream?: boolean | null
 }
 
 interface OAIChoice {

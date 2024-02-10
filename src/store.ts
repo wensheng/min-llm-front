@@ -2,13 +2,19 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { ChatSettings, MessageProps } from './types';
 
+interface SessionProps {
+  title: string
+  messages: MessageProps[]
+  date: Date
+}
 export interface ChatState {
   chatSettings: ChatSettings
   setChatSettings: (settings: ChatSettings) => void
   messages: MessageProps[]
   fetchMessage: (from: string, message: string) => void
-  savedSessions: string[]
-  saveSession: (session: string) => void
+  clearMessages: () => void
+  savedSessions: SessionProps[]
+  saveSession: () => void
 }
 
 export const useChatStore = create<ChatState>()(
@@ -18,7 +24,8 @@ export const useChatStore = create<ChatState>()(
         modelName: 'gpt-3.5-turbo',
         apiUrl: 'https://api.openai.com/v1/chat/completions',
         apiKey: '',
-        sysPrompt: 'You are a helpful assistant.'
+        sysPrompt: 'You are a helpful assistant.',
+        stream: false
       },
       setChatSettings (settings) {
         set({ chatSettings: settings });
@@ -29,10 +36,20 @@ export const useChatStore = create<ChatState>()(
           messages: [...state.messages, { from, message, date: new Date() }]
         }));
       },
-      savedSessions: [] as string[], // Fix the type of 'savedSessions' to be 'string[]'
-      saveSession: (session) => {
+      clearMessages: () => {
+        set({ messages: [] });
+      },
+      savedSessions: [] as SessionProps[],
+      saveSession: () => {
         set((state) => ({
-          savedSessions: [...state.savedSessions, session]
+          savedSessions: [
+            ...state.savedSessions,
+            {
+              title: state.messages[0].message.substring(0, 20),
+              messages: state.messages,
+              date: new Date(),
+            }
+          ]
         }));
       }
     }),

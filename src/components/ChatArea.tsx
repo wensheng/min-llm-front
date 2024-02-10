@@ -1,6 +1,7 @@
-import { type FC, useEffect, useRef } from 'react';
+import { type FC, type RefObject, useEffect, useRef, useContext } from 'react';
 import { useChatStore } from '../store';
-import ChatItem from './ChatItem';
+import { AppContext } from '../AppContext';
+import { ChatItem, LastChatItem } from './ChatItem';
 
 const chatAreaStyle: React.CSSProperties = {
   textAlign: 'left',
@@ -10,7 +11,12 @@ const chatAreaStyle: React.CSSProperties = {
   overflowY: 'scroll'
 };
 
-const ChatArea: FC = () => {
+interface ChatAreaProps {
+  currentStreamingRef: RefObject<HTMLDivElement>
+}
+
+const ChatArea: FC<ChatAreaProps> = ({ currentStreamingRef }) => {
+  const { waitingForResponse } = useContext(AppContext);
   const messages = useChatStore(state => state.messages);
   const lastMsgRef = useRef<HTMLDivElement>(null);
 
@@ -33,6 +39,11 @@ const ChatArea: FC = () => {
           </div>
         ))
       }
+      {waitingForResponse && (
+          <div style={{ marginBottom: '10px' }} >
+            <LastChatItem currentStreamingRef={currentStreamingRef} />
+          </div>
+      )}
     </div>
   );
 };

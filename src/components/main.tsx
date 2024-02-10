@@ -1,4 +1,5 @@
 import type React from 'react';
+import { useRef } from 'react';
 import { Layout } from 'antd';
 import Header from './Header';
 import ChatArea from './ChatArea';
@@ -11,14 +12,15 @@ const footerStyle: React.CSSProperties = {
 };
 
 const MainSection: React.FC = () => {
+  const currentStreamingRef = useRef<HTMLDivElement>(null);
   return (
     <Layout>
       <Header />
       <Layout.Content>
-        <ChatArea />
+        <ChatArea currentStreamingRef={currentStreamingRef} />
       </Layout.Content>
       <Layout.Footer style={footerStyle}>
-        <InputArea />
+        <InputArea currentStreamingRef={currentStreamingRef} />
       </Layout.Footer>
     </Layout>
   );

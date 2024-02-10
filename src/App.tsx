@@ -1,5 +1,4 @@
-import type React from 'react';
-import { useState } from 'react';
+import { type FC, useState } from 'react';
 import { Layout, Flex } from 'antd';
 import { AppContext } from './AppContext';
 import Sidebar from './components/sidebar';
@@ -13,7 +12,7 @@ const layoutStyle = {
   minHeight: 'calc(100vh - 8px)'
 };
 
-const App: React.FC = () => {
+const App: FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [waitingForResponse, setWaitingForResponse] = useState(false);
   return (

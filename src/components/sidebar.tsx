@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { FloatButton, Layout, Typography } from 'antd';
-import { ControlOutlined, HomeOutlined, WechatOutlined } from '@ant-design/icons';
+import { FloatButton, Layout, Tooltip, Typography } from 'antd';
+import { ControlOutlined, WechatOutlined, ExportOutlined } from '@ant-design/icons';
 import { AppContext } from '../AppContext';
 import { useChatStore } from '../store';
 import SettingsModal from './SettingsModal';
@@ -29,6 +29,19 @@ const Sidebar: React.FC = () => {
     setIsModalOpen(false);
   };
 
+  const exportSessions = (): void => {
+    const sessions = JSON.stringify(savedSessions);
+    const blob = new Blob([sessions], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'sessions.json';
+    // document.body.appendChild(a);
+    a.click();
+    // document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   // Using Sider as Drawer, might as well use Drawer
   return (
     <Layout.Sider
@@ -46,7 +59,7 @@ const Sidebar: React.FC = () => {
         {
           savedSessions.map((session, index) => (
             <div key={index} style={{ padding: '10px 0' }}>
-              {session}
+              {session.title}
             </div>
           ))
         }
@@ -57,8 +70,12 @@ const Sidebar: React.FC = () => {
             style={{ left: 24, bottom: 20 }}
             icon={<ControlOutlined />}
           >
-            <FloatButton onClick={showModal} />
-            <FloatButton icon={<HomeOutlined />} />
+            <Tooltip title="Settings">
+              <FloatButton onClick={showModal} />
+            </Tooltip>
+            <Tooltip title="Export Sessions">
+              <FloatButton icon={<ExportOutlined onClick={exportSessions} />} />
+            </Tooltip>
           </FloatButton.Group>
         ) }
       </div>
