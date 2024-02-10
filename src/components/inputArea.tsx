@@ -61,13 +61,17 @@ const InputArea: React.FC<InputAreaProps> = ({ currentStreamingRef }) => {
             }
             const text = decoder.decode(value, { stream: false });
             // data: {"id":"chatcmpl-8qGVJL7Ru0DnKHtfH61eKVwgNDY2F","object":"chat.completion.chunk","created":1707467189,"model":"gpt-3.5-turbo-0613","system_fingerprint":null,"choices":[{"index":0,"delta":{"role":"assistant","content":""},"logprobs":null,"finish_reason":null}]}
-            console.log(text);
+            // console.log(text);
             try {
               const words = text.split(/data: /g).map((chunk) => {
-                if (chunk.length === 0 || !chunk.includes('"choices":[')) {
+                if (chunk.startsWith(': ping -')) {
+                  // llama-cpp-python send this
+                  return '';
+                }
+                if (chunk.length === 0 || chunk.match(/"choices":\s*\[/) === null) {
                   return '';
                 } else {
-                  return JSON.parse(chunk).choices[0].delta.content;
+                  return JSON.parse(chunk).choices[0].delta.content ?? '';
                 }
               });
               const wordChunk = words.join('');
