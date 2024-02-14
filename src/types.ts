@@ -18,6 +18,7 @@ export interface ChatSettings {
   apiKey: string
   sysPrompt: string
   stream: boolean
+  isJson: boolean
 }
 
 export interface OAIMessage {
@@ -29,6 +30,7 @@ export interface ApiRequest {
   model: string
   messages: OAIMessage[]
   stream?: boolean | null
+  response_format?: object
 }
 
 interface OAIChoice {

@@ -1,8 +1,10 @@
 # min-llm-front
 
-Minimal LLM chat frontend written in React.
+A minimal LLM chat frontend. 
 
-The only 2 other dependencies are Antd and Zustand.
+It is useful for experimenting with OpenAI or OpenAI compatible chat completions API's.
+
+See [min-llm-back](https://github.com/wensheng/min-llm-back) for how to quickly set up an OpenAI compatible API server.
 
 ### Development
 
