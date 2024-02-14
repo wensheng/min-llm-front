@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { FloatButton, Layout, Tooltip, Typography } from 'antd';
-import { ControlOutlined, WechatOutlined, ExportOutlined } from '@ant-design/icons';
+import { ControlOutlined, MenuUnfoldOutlined, WechatOutlined, ExportOutlined } from '@ant-design/icons';
 import { AppContext } from '../AppContext';
 import { useChatStore } from '../store';
 import SettingsModal from './SettingsModal';
+import FuncsModal from './FunctionsModal';
 
 const siderStyle: React.CSSProperties = {
   textAlign: 'center',
@@ -20,6 +21,7 @@ const Sidebar: React.FC = () => {
   const { isSidebarOpen } = React.useContext(AppContext);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFuncsModalOpen, setIsFuncsModalOpen] = useState(false);
 
   const showModal = (): void => {
     setIsModalOpen(true);
@@ -27,6 +29,10 @@ const Sidebar: React.FC = () => {
 
   const closeModal = (): void => {
     setIsModalOpen(false);
+  };
+
+  const showFuncsModal = (): void => {
+    setIsFuncsModalOpen(true);
   };
 
   const exportSessions = (): void => {
@@ -68,13 +74,16 @@ const Sidebar: React.FC = () => {
             trigger="click"
             type="default"
             style={{ left: 24, bottom: 20 }}
-            icon={<ControlOutlined />}
+            icon={<MenuUnfoldOutlined />}
           >
-            <Tooltip title="Settings">
-              <FloatButton onClick={showModal} />
+            <Tooltip title="Export Sessions" mouseEnterDelay={0} mouseLeaveDelay={0}>
+              <FloatButton icon={<ExportOutlined />} onClick={exportSessions} />
             </Tooltip>
-            <Tooltip title="Export Sessions">
-              <FloatButton icon={<ExportOutlined onClick={exportSessions} />} />
+            <Tooltip title="Define Functions" mouseEnterDelay={0} mouseLeaveDelay={0}>
+              <FloatButton onClick={showFuncsModal} />
+            </Tooltip>
+            <Tooltip title="Chat Settings" mouseEnterDelay={0} mouseLeaveDelay={0}>
+              <FloatButton icon={<ControlOutlined />} onClick={showModal} />
             </Tooltip>
           </FloatButton.Group>
         ) }
@@ -84,6 +93,10 @@ const Sidebar: React.FC = () => {
         setChatSettings={setChatSettings}
         isOpen={isModalOpen}
         onOk={closeModal}
+      />
+      <FuncsModal
+        isOpen={isFuncsModalOpen}
+        onOk={ () => { setIsFuncsModalOpen(false); } }
       />
     </Layout.Sider>
   );

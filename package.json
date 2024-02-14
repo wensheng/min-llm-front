@@ -3,8 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "antd": "^5.14.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "zustand": "^4.5.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.17.0",
@@ -14,12 +16,10 @@
     "@types/node": "^16.18.79",
     "@types/react": "^18.2.52",
     "@types/react-dom": "^18.2.18",
-    "antd": "^5.14.0",
     "eslint": "8.40.0",
     "eslint-config-standard-with-typescript": "^36.0.1",
     "react-scripts": "5.0.1",
-    "typescript": "^4.9.5",
-    "zustand": "^4.5.0"
+    "typescript": "^4.9.5"
   },
   "scripts": {
     "start": "react-scripts start",

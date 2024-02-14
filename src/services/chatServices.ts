@@ -6,7 +6,7 @@ import type { ApiRequest, ChatSettings, OAIMessage } from '../types';
  * @param message user message
  */
 export const sendToLLM = async (chatSettings: ChatSettings, message: string): Promise<Response> => {
-  const { apiUrl, apiKey, modelName, sysPrompt, stream } = chatSettings;
+  const { apiUrl, apiKey, modelName, sysPrompt, stream, isJson } = chatSettings;
   const headers: Record<string, string> = {
     'Content-Type': 'application/json'
   };
@@ -25,6 +25,10 @@ export const sendToLLM = async (chatSettings: ChatSettings, message: string): Pr
     model: modelName,
     stream
   };
+
+  if (isJson) {
+    apiData.response_format = { type: 'json_object' };
+  }
 
   if (apiUrl.startsWith('https://api.openai.com') && apiKey !== '') {
     headers.Authorization = `Bearer ${apiKey}`;

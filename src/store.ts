@@ -15,6 +15,8 @@ export interface ChatState {
   clearMessages: () => void
   savedSessions: SessionProps[]
   saveSession: () => void
+  functionJson: string
+  setFunctionJson: (value: string) => void
 }
 
 export const useChatStore = create<ChatState>()(
@@ -25,7 +27,8 @@ export const useChatStore = create<ChatState>()(
         apiUrl: 'https://api.openai.com/v1/chat/completions',
         apiKey: '',
         sysPrompt: 'You are a helpful assistant.',
-        stream: false
+        stream: false,
+        isJson: true,
       },
       setChatSettings (settings) {
         set({ chatSettings: settings });
@@ -51,6 +54,10 @@ export const useChatStore = create<ChatState>()(
             }
           ]
         }));
+      },
+      functionJson: '',
+      setFunctionJson: (value) => {
+        set({ functionJson: value });
       }
     }),
     { name: 'mlf-storage' }

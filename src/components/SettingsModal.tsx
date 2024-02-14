@@ -16,9 +16,10 @@ const SettingsModal: React.FC<SettingsModalProps> = (props) => {
   const [sysPrompt, setSysPrompt] = useState(props.chatSettings.sysPrompt);
   const [apiKey, setApiKey] = useState(props.chatSettings.apiKey);
   const [stream, setStream] = useState(props.chatSettings.stream);
+  const [isJson, setIsJson] = useState(props.chatSettings.isJson);
 
   const onOk = (): void => {
-    props.setChatSettings({ apiUrl, modelName, sysPrompt, apiKey, stream });
+    props.setChatSettings({ apiUrl, modelName, sysPrompt, apiKey, stream, isJson });
     props.onOk();
   }
 
@@ -50,7 +51,6 @@ const SettingsModal: React.FC<SettingsModalProps> = (props) => {
           value={modelName}
           onChange={ (e) => { setModelName(e.target.value); } }
         />
-        <br />
         <div>System Prompt</div>
         <Input.TextArea
           value={sysPrompt}
@@ -59,6 +59,12 @@ const SettingsModal: React.FC<SettingsModalProps> = (props) => {
 
         <span>Streaming Response: &nbsp;
         <Checkbox checked={stream} onChange={ (e) => { setStream(e.target.checked); } } />
+        </span>
+        <span>JSON Response: &nbsp;
+        <Checkbox checked={isJson} onChange={ (e) => { setIsJson(e.target.checked); } } />
+        { ' ' } &nbsp; <span style={{ color: '#c00', fontSize: '10px' }}>
+          You must also indicate you want JSON response in the either system prompt or user message.
+        </span>
         </span>
       </Space>
 

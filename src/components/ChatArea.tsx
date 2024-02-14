@@ -17,6 +17,7 @@ interface ChatAreaProps {
 
 const ChatArea: FC<ChatAreaProps> = ({ currentStreamingRef }) => {
   const { waitingForResponse } = useContext(AppContext);
+  const { stream } = useChatStore(state => state.chatSettings);
   const messages = useChatStore(state => state.messages);
   const lastMsgRef = useRef<HTMLDivElement>(null);
 
@@ -39,7 +40,7 @@ const ChatArea: FC<ChatAreaProps> = ({ currentStreamingRef }) => {
           </div>
         ))
       }
-      {waitingForResponse && (
+      {stream && waitingForResponse && (
           <div style={{ marginBottom: '10px' }} >
             <LastChatItem currentStreamingRef={currentStreamingRef} />
           </div>
