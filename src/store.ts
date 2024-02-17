@@ -11,7 +11,7 @@ export interface ChatState {
   chatSettings: ChatSettings
   setChatSettings: (settings: ChatSettings) => void
   messages: MessageProps[]
-  fetchMessage: (from: string, message: string) => void
+  addMessage: (message: MessageProps) => void
   clearMessages: () => void
   savedSessions: SessionProps[]
   saveSession: () => void
@@ -27,38 +27,38 @@ export const useChatStore = create<ChatState>()(
         apiUrl: 'https://api.openai.com/v1/chat/completions',
         apiKey: '',
         sysPrompt: 'You are a helpful assistant.',
-        stream: false,
+        stream: true,
         isJson: true,
       },
       setChatSettings (settings) {
         set({ chatSettings: settings });
       },
       messages: [] as MessageProps[],
-      fetchMessage: (from, message) => {
+      addMessage (message) {
         set((state) => ({
-          messages: [...state.messages, { from, message, date: new Date() }]
+          messages: [...state.messages, message],
         }));
       },
-      clearMessages: () => {
+      clearMessages () {
         set({ messages: [] });
       },
       savedSessions: [] as SessionProps[],
-      saveSession: () => {
+      saveSession () {
         set((state) => ({
           savedSessions: [
             ...state.savedSessions,
             {
-              title: state.messages[0].message.substring(0, 20),
+              title: state.messages[0].content.substring(0, 20), // Updated code
               messages: state.messages,
               date: new Date(),
-            }
-          ]
+            },
+          ],
         }));
       },
       functionJson: '',
-      setFunctionJson: (value) => {
+      setFunctionJson (value) {
         set({ functionJson: value });
-      }
+      },
     }),
     { name: 'mlf-storage' }
   )
