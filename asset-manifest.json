@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/min-llm-front/static/css/main.e6c13ad2.css",
+    "main.js": "/min-llm-front/static/js/main.19d137d4.js",
+    "index.html": "/min-llm-front/index.html",
+    "main.e6c13ad2.css.map": "/min-llm-front/static/css/main.e6c13ad2.css.map",
+    "main.19d137d4.js.map": "/min-llm-front/static/js/main.19d137d4.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e6c13ad2.css",
+    "static/js/main.19d137d4.js"
+  ]
+}
