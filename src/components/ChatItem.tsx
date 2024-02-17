@@ -33,13 +33,13 @@ export const LastChatItem: FC<{ currentStreamingRef: React.RefObject<HTMLDivElem
   </Row>
 );
 
-export const ChatItem = memo<MessageProps>(({ from, message, date }: MessageProps) => {
-  if (from === 'user') {
+export const ChatItem = memo<MessageProps>(({ role, content, date }: MessageProps) => {
+  if (role === 'user') {
     return (
       <Row justify="end">
         <Col span={21}>
           <Card actions={[date.toLocaleString('en-US', dateOptions)]} >
-            {formatMessage(message)}
+            {formatMessage(content)}
           </Card>
         </Col>
         <Col span={1}><UserOutlined style={{ fontSize: '24px' }} /></Col>
@@ -51,7 +51,7 @@ export const ChatItem = memo<MessageProps>(({ from, message, date }: MessageProp
       <Col span={1}><RobotOutlined style={{ fontSize: '24px' }} /></Col>
       <Col span={21}>
         <Card actions={[date.toLocaleString('en-US', dateOptions)]} >
-          {formatMessage(message)}
+          {formatMessage(content)}
         </Card>
       </Col>
     </Row>

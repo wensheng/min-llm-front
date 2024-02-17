@@ -6,12 +6,6 @@ export interface ChatItemProps<T = Record<string, unknown>> {
   date: Date
 };
 
-export interface MessageProps {
-  from: string
-  message: string
-  date: Date
-};
-
 export interface ChatSettings {
   modelName: string
   apiUrl: string
@@ -21,10 +15,16 @@ export interface ChatSettings {
   isJson: boolean
 }
 
+export type ChatRole = 'assistant' | 'user' | 'system'
+
 export interface OAIMessage {
-  role: 'assistant' | 'user' | 'system'
+  role: ChatRole
   content: string
 }
+
+export interface MessageProps extends OAIMessage {
+  date: Date
+};
 
 export interface ApiRequest {
   model: string
