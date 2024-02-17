@@ -2,7 +2,7 @@ import type React from 'react';
 import { useContext, useState } from 'react';
 import { Button, Flex, Input, Upload, type UploadProps } from 'antd';
 import { SendOutlined, UploadOutlined } from '@ant-design/icons';
-import type { ChatSettings } from '../types';
+import type { ChatSettings, MessageProps } from '../types';
 import { useChatStore } from '../store';
 import { AppContext } from '../AppContext';
 import { sendToLLM } from '../services/chatServices';
@@ -33,18 +33,19 @@ interface InputAreaProps {
 const InputArea: React.FC<InputAreaProps> = ({ currentStreamingRef }) => {
   const [inputValue, setInputValue] = useState('');
   const { waitingForResponse, setWaitingForResponse } = useContext(AppContext);
-  const fetchMessage = useChatStore((state) => state.fetchMessage);
+  const addMessage = useChatStore((state) => state.addMessage);
   const chatSettings: ChatSettings = useChatStore((state) => state.chatSettings);
+  const messages = useChatStore((state) => state.messages);
 
   const onSend = (): void => {
     if (waitingForResponse) {
       return;
     }
-    fetchMessage('user', inputValue);
+    const msg: MessageProps = { role: 'user', content: inputValue, date: new Date() };
     setWaitingForResponse(true);
 
     if (chatSettings.stream) {
-      sendToLLM(chatSettings, inputValue)
+      sendToLLM(chatSettings, [...messages, msg])
         .then((response: Response) => response.body)
         .then(async (stream: ReadableStream<Uint8Array> | null) => {
           if (stream === null) {
@@ -86,23 +87,25 @@ const InputArea: React.FC<InputAreaProps> = ({ currentStreamingRef }) => {
             }
           }
           setWaitingForResponse(false);
-          fetchMessage('llm', respText);
+          addMessage(msg);
+          addMessage({ role: 'assistant', content: respText, date: new Date() });
         })
         .catch((error) => {
           console.error(error);
         });
     } else {
-      sendToLLM(chatSettings, inputValue)
+      sendToLLM(chatSettings, [...messages, msg])
         .then(async (response: Response) => await response.json())
         .then((response) => {
+          addMessage(msg);
           if ('error' in response) {
-            fetchMessage('llm', response.error.message);
+            addMessage({ role: 'assistant', content: response.error.message, date: new Date() });
           } else {
             if (response.object === 'error') {
               // FastChat error
-              fetchMessage('llm', response.message ?? '');
+              addMessage({ role: 'assistant', content: response.message ?? '', date: new Date() });
             } else {
-              fetchMessage('llm', response.choices[0].message.content);
+              addMessage({ role: 'assistant', content: response.choices[0].message.content, date: new Date() });
             }
           }
           setWaitingForResponse(false);
@@ -128,6 +131,7 @@ const InputArea: React.FC<InputAreaProps> = ({ currentStreamingRef }) => {
         rows={2}
         placeholder="your question or instruction"
         onChange={onChange}
+        value={inputValue}
       />
       <Button type="primary" onClick={onSend}><SendOutlined /></Button>
     </Flex>
