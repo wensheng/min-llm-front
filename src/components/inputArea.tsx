@@ -43,6 +43,7 @@ const InputArea: React.FC<InputAreaProps> = ({ currentStreamingRef }) => {
     }
     const msg: MessageProps = { role: 'user', content: inputValue, date: new Date() };
     setWaitingForResponse(true);
+    addMessage(msg);
 
     if (chatSettings.stream) {
       sendToLLM(chatSettings, [...messages, msg])
@@ -87,7 +88,6 @@ const InputArea: React.FC<InputAreaProps> = ({ currentStreamingRef }) => {
             }
           }
           setWaitingForResponse(false);
-          addMessage(msg);
           addMessage({ role: 'assistant', content: respText, date: new Date() });
         })
         .catch((error) => {
@@ -97,7 +97,6 @@ const InputArea: React.FC<InputAreaProps> = ({ currentStreamingRef }) => {
       sendToLLM(chatSettings, [...messages, msg])
         .then(async (response: Response) => await response.json())
         .then((response) => {
-          addMessage(msg);
           if ('error' in response) {
             addMessage({ role: 'assistant', content: response.error.message, date: new Date() });
           } else {
